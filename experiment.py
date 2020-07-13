@@ -22,8 +22,6 @@ metrics = {
     "Specificity": specificity
 }
 
-ensemble_size = 15
-
 for data_type in data_types:
     for ensemble_size in range(3,49,2):
 
@@ -39,7 +37,7 @@ for data_type in data_types:
         datasets = data.load()
 
         eval = ws.evaluation.Evaluator(
-            datasets=datasets, protocol=(1, 2, 1410))
+            datasets=datasets, protocol=(1, 5, 1410))
         eval.process(clfs=clfs, verbose=False)
 
         scores = eval.score(metrics=metrics, verbose=False)
