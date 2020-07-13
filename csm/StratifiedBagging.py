@@ -40,10 +40,10 @@ class StratifiedBagging(BaseEstimator, ClassifierMixin):
         np.random.seed(self.random_state)
 
         for i in range(self.ensemble_size):
-            subspaces = [np.random.randint(0, self.X_[self.y_==label].shape[0], self.X_[self.y_==label].shape[0]) for label in self.classes_]
+            selected_samples = [np.random.randint(0, self.X_[self.y_==label].shape[0], self.X_[self.y_==label].shape[0]) for label in self.classes_]
 
-            X_train = np.concatenate((self.X_[self.y_==0][subspaces[0]],self.X_[self.y_==1][subspaces[1]]), axis=0)
-            y_train = np.concatenate((self.y_[self.y_==0][subspaces[0]],self.y_[self.y_==1][subspaces[1]]), axis=0)
+            X_train = np.concatenate((self.X_[self.y_==0][selected_samples[0]],self.X_[self.y_==1][selected_samples[1]]), axis=0)
+            y_train = np.concatenate((self.y_[self.y_==0][selected_samples[0]],self.y_[self.y_==1][selected_samples[1]]), axis=0)
 
             self.estimators_.append(clone(self.base_clf).fit(X_train, y_train))
 
