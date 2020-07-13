@@ -43,5 +43,5 @@ for data_type in data_types:
             datasets=datasets, protocol=(1, 2, 1410))
         eval.process(clfs=clfs, verbose=False)
 
-        scores = eval.score(metrics=metrics, verbose=True)
+        scores = eval.score(metrics=metrics, verbose=False)
         np.save("scores/%s_%i" % (data_type, ensemble_size), scores)
