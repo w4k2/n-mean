@@ -37,10 +37,6 @@ class StratifiedBagging(BaseEstimator, ClassifierMixin):
         self.y_ = y
         self.estimators_ = []
 
-        # print(self.X_[self.y_==0].shape[0])
-        # print(self.X_[self.y_==1].shape[0])
-        # print(self.X_.shape[0])
-
         np.random.seed(self.random_state)
 
         for i in range(self.ensemble_size):

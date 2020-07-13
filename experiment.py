@@ -36,7 +36,6 @@ for data_type in data_types:
 
         data = ws.utils.Data(selection=(
             "all", [data_type, "binary"]), path="datasets/")
-        # data = ws.utils.Data(selection=["ecoli4"], path="datasets/")
         datasets = data.load()
 
         eval = ws.evaluation.Evaluator(
