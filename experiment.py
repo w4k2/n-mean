@@ -24,7 +24,6 @@ metrics = {
 
 for data_type in data_types:
     for ensemble_size in range(3,49,2):
-
         clfs = {
             "L": LinearClassifier(),
             "Mean": StratifiedBagging(ensemble_size=ensemble_size, decision="mean", random_state=1410),
@@ -37,8 +36,12 @@ for data_type in data_types:
         datasets = data.load()
 
         eval = ws.evaluation.Evaluator(
-            datasets=datasets, protocol=(5, 5, 1410), store="store/")
+            datasets=datasets,
+            protocol=(5, 5, 1410),
+            store="store/"
+        )
+
         eval.process(clfs=clfs, verbose=True)
-        #
+
         # scores = eval.score(metrics=metrics, verbose=False)
         # np.save("scores/%s_%i" % (data_type, ensemble_size), scores)
