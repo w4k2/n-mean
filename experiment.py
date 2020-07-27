@@ -9,7 +9,9 @@ from strlearn.metrics import (
     specificity,
 )
 from csm import StratifiedBagging
+from csm import Burduk
 from csm import LinearClassifier
+from sklearn.svm import SVC
 
 data_types = ["balanced", "imbalanced"]
 
@@ -23,12 +25,13 @@ metrics = {
 }
 
 for data_type in data_types:
-    for ensemble_size in range(3,49,2):
+    for ensemble_size in [10]:
+        #for ensemble_size in range(3,49,2):
         clfs = {
-            "L": LinearClassifier(),
-            "Mean": StratifiedBagging(ensemble_size=ensemble_size, decision="mean", random_state=1410),
-            "N-mean": StratifiedBagging(ensemble_size=ensemble_size, decision="n-mean", random_state=1410),
-            "MV": StratifiedBagging(ensemble_size=ensemble_size, decision="mv", random_state=1410)
+            "SVM": SVC(),
+            "Mean": Burduk(ensemble_size=ensemble_size, decision="mean", random_state=1410),
+            "N-mean": Burduk(ensemble_size=ensemble_size, decision="n-mean", random_state=1410),
+            "MV": Burduk(ensemble_size=ensemble_size, decision="mv", random_state=1410)
         }
 
         data = ws.utils.Data(selection=(
@@ -37,7 +40,7 @@ for data_type in data_types:
 
         eval = ws.evaluation.Evaluator(
             datasets=datasets,
-            protocol=(5, 5, 1410),
+            protocol=(1, 5, 1410),
             store="store/"
         )
 
@@ -45,3 +48,12 @@ for data_type in data_types:
 
         # scores = eval.score(metrics=metrics, verbose=False)
         # np.save("scores/%s_%i" % (data_type, ensemble_size), scores)
+
+"""
+clfs = {
+    "L": LinearClassifier(),
+    "Mean": StratifiedBagging(ensemble_size=ensemble_size, decision="mean", random_state=1410),
+    "N-mean": StratifiedBagging(ensemble_size=ensemble_size, decision="n-mean", random_state=1410),
+    "MV": StratifiedBagging(ensemble_size=ensemble_size, decision="mv", random_state=1410)
+}
+"""
