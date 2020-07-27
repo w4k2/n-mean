@@ -12,16 +12,16 @@ metrics = {
     "G-mean": geometric_mean_score_1,
     "F1": f1_score,
 }
-ensemble_size = 10
-k = 100
+ensemble_size = 20
+k = 20
 clfs = {
     "BC": LinearClassifier(),
     "-M": StratifiedBoosting(ensemble_size=ensemble_size, decision="mean",
-                             random_state=1410, k=10),
+                             random_state=1410, k=k),
     "NM": StratifiedBoosting(ensemble_size=ensemble_size, decision="n-mean",
-                             random_state=1410, k=10),
+                             random_state=1410, k=k),
     "MV": StratifiedBoosting(ensemble_size=ensemble_size, decision="mv",
-                             random_state=1410, k=10)
+                             random_state=1410, k=k)
 }
 
 data = ws.utils.Data(selection=("all", ["balanced", "binary"]),
@@ -34,3 +34,10 @@ eval = ws.evaluation.Evaluator(
 )
 eval.process(clfs=clfs, verbose=True)
 scores = eval.score(metrics=metrics, verbose=True)
+
+
+t = ws.evaluation.PairedTests(eval).process(
+    't_test_corrected', corr=.2, tablefmt="plain", std_fmt="(%.2f)"
+)
+
+[print(t[a]) for a in t]
