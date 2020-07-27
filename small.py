@@ -16,7 +16,7 @@ ensemble_size = 20
 k = 20
 clfs = {
     "BC": LinearClassifier(),
-    "-M": StratifiedBoosting(ensemble_size=ensemble_size, decision="mean",
+    "M": StratifiedBoosting(ensemble_size=ensemble_size, decision="mean",
                              random_state=1410, k=k),
     "NM": StratifiedBoosting(ensemble_size=ensemble_size, decision="n-mean",
                              random_state=1410, k=k),
