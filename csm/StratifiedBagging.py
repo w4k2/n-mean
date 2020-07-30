@@ -116,7 +116,7 @@ class StratifiedBoosting(BaseEstimator, ClassifierMixin):
             raise ValueError("number of features does not match")
 
         decfunc = self.decfunc(X)
-        if self.decision == "mvote":
+        if self.decision == "mv":
             predict = []
             for i, row in enumerate(decfunc.T):
                 decision = np.bincount(row)
