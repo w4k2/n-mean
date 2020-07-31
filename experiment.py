@@ -35,16 +35,18 @@ scores_bac = []
 # scores_precision = []
 # scores_recall = []
 
-for ensemble_size in range(3, 55, 2):
+random_state = 1410
+
+for ensemble_size in range(15, 55, 2):
     print("%i CLASSIFIERS" % ensemble_size)
     clfs = {
         "L": LinearClassifier(),
         "M": StratifiedBoosting(ensemble_size=ensemble_size, decision="mean",
-                                 random_state=1410, k=ensemble_size),
+                                 random_state=random_state, k=ensemble_size),
         "NM": StratifiedBoosting(ensemble_size=ensemble_size, decision="n-mean",
-                                 random_state=1410, k=ensemble_size),
+                                 random_state=random_state, k=ensemble_size),
         "MV": StratifiedBoosting(ensemble_size=ensemble_size, decision="mv",
-                                 random_state=1410, k=ensemble_size)
+                                 random_state=random_state, k=ensemble_size)
     }
 
     data = ws.utils.Data(selection=(
@@ -60,9 +62,9 @@ for ensemble_size in range(3, 55, 2):
     eval.process(clfs=clfs, verbose=True)
 
     scores = eval.score(metrics=metrics, verbose=True)
-    # stat = ws.evaluation.PairedTests(eval)
-    # tables = stat.process("t_test_corrected", tablefmt="latex_booktabs")
-    # [print(tables[a]) for a in tables]
+    stat = ws.evaluation.PairedTests(eval)
+    tables = stat.process("t_test_corrected", tablefmt="latex_booktabs")
+    [print(tables[a]) for a in tables]
 
     # st_ranks = stat.global_ranks(name=str(ensemble_size))
     # np.save("scores/%s_%i" % (data_type, ensemble_size), scores)
@@ -117,7 +119,7 @@ for p, data in enumerate(plt_data):
     )
     plt.tight_layout()
     plt.savefig("foo")
-    plt.savefig("plots/%s_imb" % metric_names[p])
-    plt.savefig("plots/%s_imb.eps" % metric_names[p])
+    plt.savefig("plots/%s" % metric_names[p])
+    plt.savefig("plots/%s.eps" % metric_names[p])
     plt.close()
 # """

@@ -22,6 +22,8 @@ colors = [(0, 0, 0), (0, 0, 0), (0.9, 0, 0), (0, 0, 0)]
 ls = ["--", "-", "-", ":"]
 lw = [1.5, 1.5, 1.5, 1.5]
 
+random_state = 1410
+
 metrics = {
     "BAC": balanced_accuracy_score,
     "G-mean": geometric_mean_score_1,
@@ -43,10 +45,10 @@ for ensemble_size in range(3, 55, 2):
     # print("%i CLASSIFIERS" % ensemble_size)
 
     oclfs = {
-        "OL": ws.classifiers.MetaPreproc(base_estimator=LinearClassifier(), preprocessing=RandomOverSampler(random_state=42)),
-        "OM": ws.classifiers.MetaPreproc(base_estimator=StratifiedBoosting(ensemble_size=ensemble_size, decision="mean", random_state=1410, k=ensemble_size), preprocessing=RandomOverSampler(random_state=42)),
-        "ONM": ws.classifiers.MetaPreproc(base_estimator=StratifiedBoosting(ensemble_size=ensemble_size, decision="n-mean", random_state=1410, k=ensemble_size), preprocessing=RandomOverSampler(random_state=42)),
-        "OMV": ws.classifiers.MetaPreproc(base_estimator=StratifiedBoosting(ensemble_size=ensemble_size, decision="mv", random_state=1410, k=ensemble_size), preprocessing=RandomOverSampler(random_state=42)),
+        "OL": ws.classifiers.MetaPreproc(base_estimator=LinearClassifier(), preprocessing=RandomOverSampler(random_state=random_state)),
+        "OM": ws.classifiers.MetaPreproc(base_estimator=StratifiedBoosting(ensemble_size=ensemble_size, decision="mean", random_state=random_state, k=ensemble_size), preprocessing=RandomOverSampler(random_state=random_state)),
+        "ONM": ws.classifiers.MetaPreproc(base_estimator=StratifiedBoosting(ensemble_size=ensemble_size, decision="n-mean", random_state=random_state, k=ensemble_size), preprocessing=RandomOverSampler(random_state=random_state)),
+        "OMV": ws.classifiers.MetaPreproc(base_estimator=StratifiedBoosting(ensemble_size=ensemble_size, decision="mv", random_state=random_state, k=ensemble_size), preprocessing=RandomOverSampler(random_state=random_state)),
     }
 
     data = ws.utils.Data(selection=(
@@ -64,7 +66,7 @@ for ensemble_size in range(3, 55, 2):
         store="store_imb/"
     )
 
-    eval.process(clfs=oclfs, verbose=False)
+    eval.process(clfs=oclfs, verbose=True)
 
     scores = eval.score(metrics=metrics, verbose=True)
     stat = ws.evaluation.PairedTests(eval)
@@ -127,7 +129,7 @@ for p, data in enumerate(plt_data):
     )
     plt.tight_layout()
     plt.savefig("foo")
-    plt.savefig("plots/%s_imb" % metric_names[p])
-    plt.savefig("plots/%s_imb.eps" % metric_names[p])
+    plt.savefig("plots/imb/%s_imb" % metric_names[p])
+    plt.savefig("plots/imb/%s_imb.eps" % metric_names[p])
     plt.close()
-"""
+# """
