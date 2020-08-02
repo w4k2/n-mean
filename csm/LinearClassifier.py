@@ -8,19 +8,13 @@ class LinearClassifier(BaseEstimator, ClassifierMixin):
         self.b = np.mean(p, axis=0)
         self.w = p[1] - self.b
         # innowacja
-        self.foo = (p - self.b).dot(self.w)
+        self.foo = np.abs((p - self.b).dot(self.w))[0]
         return self
 
-    # def decision_function(self, X):
-    #     return (X - self.b).dot(self.w)
     def decision_function(self, X):
-        a = (X - self.b).dot(self.w)
-        a = a / np.abs(self.foo[1])
-        b = np.abs(np.abs(a) - 1)
-        b[b > 1] = 1
-        b = 1 - b
-        b[a < 0] = -b[a < 0]
-        return b
+        df = (X - self.b).dot(self.w)
+        z = self.foo * (2/(1 + np.exp(-df))-1)
+        return df
 
     def predict(self, X):
         return self.decision_function(X) > 0

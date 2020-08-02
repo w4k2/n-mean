@@ -37,7 +37,7 @@ scores_bac = []
 
 random_state = 1410
 
-for ensemble_size in range(15, 55, 2):
+for ensemble_size in range(3, 55, 2):
     print("%i CLASSIFIERS" % ensemble_size)
     clfs = {
         "L": LinearClassifier(),
@@ -56,7 +56,7 @@ for ensemble_size in range(15, 55, 2):
     eval = ws.evaluation.Evaluator(
         datasets=datasets,
         protocol=(5, 5, 1410),
-        store="store/"
+        store="/Users/xehivs/store/"
     )
 
     eval.process(clfs=clfs, verbose=True)
