@@ -17,8 +17,8 @@ from tabulate import tabulate
 
 # Set plot params
 rcParams["font.family"] = "monospace"
-colors = [(0, 0, 0), (0, 0, 0), (0.9, 0, 0), (0, 0, 0)]
-ls = ["--", "-", "-", ":"]
+colors = [(0, 0, 0), (0, 0, 0), (0, 0, 0), (0.9, 0, 0)]
+ls = ["-", "--", ":", "-"]
 lw = [1.5, 1.5, 1.5, 1.5]
 
 metrics = {
@@ -32,21 +32,19 @@ metrics = {
 
 
 scores_bac = []
-# scores_precision = []
-# scores_recall = []
 
 random_state = 1410
 
 for ensemble_size in range(3, 55, 2):
-    print("%i CLASSIFIERS" % ensemble_size)
+    # print("%i CLASSIFIERS" % ensemble_size)
     clfs = {
         "L": LinearClassifier(),
+        "MV": StratifiedBoosting(ensemble_size=ensemble_size, decision="mv",
+                                 random_state=random_state, k=ensemble_size),
         "M": StratifiedBoosting(ensemble_size=ensemble_size, decision="mean",
                                  random_state=random_state, k=ensemble_size),
         "NM": StratifiedBoosting(ensemble_size=ensemble_size, decision="n-mean",
                                  random_state=random_state, k=ensemble_size),
-        "MV": StratifiedBoosting(ensemble_size=ensemble_size, decision="mv",
-                                 random_state=random_state, k=ensemble_size)
     }
 
     data = ws.utils.Data(selection=(
@@ -62,9 +60,9 @@ for ensemble_size in range(3, 55, 2):
     eval.process(clfs=clfs, verbose=True)
 
     scores = eval.score(metrics=metrics, verbose=True)
-    stat = ws.evaluation.PairedTests(eval)
-    tables = stat.process("t_test_corrected", tablefmt="latex_booktabs")
-    [print(tables[a]) for a in tables]
+    # stat = ws.evaluation.PairedTests(eval)
+    # tables = stat.process("t_test_corrected", tablefmt="latex_booktabs")
+    # [print(tables[a]) for a in tables]
 
     # st_ranks = stat.global_ranks(name=str(ensemble_size))
     # np.save("scores/%s_%i" % (data_type, ensemble_size), scores)
@@ -73,19 +71,13 @@ for ensemble_size in range(3, 55, 2):
 
     # print(eval.mean_ranks)
 
-    scores_bac.append(eval.mean_ranks[0])
-    # scores_precision.append(eval.mean_ranks[1])
-    # scores_recall.append(eval.mean_ranks[2])
 
 # plots
-# """
+"""
+    scores_bac.append(eval.mean_ranks[0])
 scores_bac = np.array(scores_bac)
-# scores_precision = np.array(scores_precision)
-# scores_recall = np.array(scores_recall)
 
-# plt_data = [scores_bac, scores_precision, scores_recall]
 plt_data = [scores_bac]
-# metric_names = ["BAC", "Precision", "Recall"]
 metric_names = ["BAC"]
 
 for p, data in enumerate(plt_data):
