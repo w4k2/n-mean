@@ -63,7 +63,7 @@ for ensemble_size in range(3, 55, 2):
     eval = ws.evaluation.Evaluator(
         datasets=datasets,
         protocol=(5, 5, 1410),
-        store="store_imb/"
+        store="store/"
     )
 
     eval.process(clfs=oclfs, verbose=True)
