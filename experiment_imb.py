@@ -14,7 +14,17 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from tabulate import tabulate
 from imblearn.over_sampling import RandomOverSampler, SMOTE
+from sklearn.metrics import roc_auc_score
 
+def rrse(y_true, y_pred):
+    return -np.sqrt(np.sum(np.square(y_true-y_pred))/
+                   np.sum(np.square(y_true-np.mean(y_true))))
+
+def new_wonderful_auc(y_true, y_pred):
+    try:
+        return roc_auc_score(y_true, y_pred)
+    except ValueError:
+        return 0.0
 
 # Set plot params
 rcParams["font.family"] = "monospace"
@@ -26,11 +36,13 @@ random_state = 1410
 
 metrics = {
     "BAC": balanced_accuracy_score,
-    "G-mean": geometric_mean_score_1,
-    "F1": f1_score,
-    "Precision": precision,
-    "Recall": recall,
-    "Specificity": specificity
+    # "G-mean": geometric_mean_score_1,
+    # "F1": f1_score,
+    # "Precision": precision,
+    # "Recall": recall,
+    # "Specificity": specificity,
+    "AUC": new_wonderful_auc,
+    "RRSE": rrse,
 }
 
 
@@ -42,7 +54,7 @@ scores_recall = []
 scores_specificity = []
 
 for ensemble_size in range(3, 55, 2):
-    # print("%i CLASSIFIERS" % ensemble_size)
+    print("%i CLASSIFIERS" % ensemble_size)
 
     oclfs = {
         "OL": ws.classifiers.MetaPreproc(base_estimator=LinearClassifier(), preprocessing=RandomOverSampler(random_state=random_state)),
@@ -66,9 +78,9 @@ for ensemble_size in range(3, 55, 2):
         store="store_imb/"
     )
 
-    eval.process(clfs=oclfs, verbose=False)
+    eval.process(clfs=oclfs, verbose=True)
 
-    scores = eval.score(metrics=metrics, verbose=True)
+    scores = eval.score(metrics=metrics, verbose=False)
     stat = ws.evaluation.PairedTests(eval)
     # tables = stat.process("t_test_corrected", tablefmt="latex_booktabs")
     # [print(tables[a]) for a in tables]

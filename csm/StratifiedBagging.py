@@ -2,6 +2,7 @@ from sklearn.base import BaseEstimator, ClassifierMixin, clone
 from sklearn.utils.validation import check_X_y, check_array, check_is_fitted
 import numpy as np
 from .LinearClassifier import LinearClassifier
+import random
 
 
 def m_pad(A, MOD=10000000):
@@ -38,6 +39,8 @@ class StratifiedBoosting(BaseEstimator, ClassifierMixin):
         self.estimators_ = []
 
         np.random.seed(self.random_state)
+
+        self.draws = None
 
         # Prepare probas
         p = np.ones(y.shape)
@@ -79,6 +82,7 @@ class StratifiedBoosting(BaseEstimator, ClassifierMixin):
         elif self.decision == "mean":
             decfunc = np.mean(decfuncs, axis=0)
         elif self.decision == "mv":
+            self.draws = 0
             decfunc = np.array([clf.predict(X) for clf in self.estimators_])
         return decfunc
 
@@ -92,8 +96,14 @@ class StratifiedBoosting(BaseEstimator, ClassifierMixin):
         if self.decision == "mv":
             predict = []
             for i, row in enumerate(decfunc.T):
-                decision = np.bincount(row)
-                predict.append(np.argmax(decision))
+                _, count = np.unique(row, return_counts=True)
+                if count.shape[0]==2 and count[0]==count[1]:
+                    self.draws += 1
+                    dec = random.randint(0, 1)
+                    predict.append(dec)
+                else:
+                    decision = np.bincount(row)
+                    predict.append(np.argmax(decision))
             y_pred = np.array(predict)
         else:
             y_pred = decfunc > 0
